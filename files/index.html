@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">TRACKLINE</title>
+
+  <!-- Tailwind CDN dengan custom color tokens -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest:  '#1B2B22',
+            deep:    '#0F1A14',
+            ember:   '#E2622A',
+            sunrise: '#F2A24B',
+            mist:    '#F4F1E8',
+            stone:   '#8C9485',
+          },
+          fontFamily: {
+            display: ['Anton', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+            mono:    ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-mist text-deep overflow-x-hidden font-body">
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[3px] z-[100]" style="width:0%;background:#E2622A;transition:width 80ms linear"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       NAVBAR
+       ══════════════════════════════════════════════════════════════ -->
+  <nav id="navbar" class="fixed top-0 inset-x-0 z-50 border-b transition-shadow duration-300"
+       style="background:rgba(244,241,232,0.88);backdrop-filter:blur(16px);border-color:rgba(0,0,0,0.07)">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#hero" id="nav-brand" class="font-display text-2xl tracking-wide text-deep"></a>
+
+      <!-- Desktop links -->
+      <div class="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest text-forest">
+        <a href="#select-trip" class="nav-link hover:text-ember">Trip</a>
+        <a href="#packages"    class="nav-link hover:text-ember">Paket</a>
+        <a href="#comparison"  class="nav-link hover:text-ember">Fasilitas</a>
+        <a href="#faq"         class="nav-link hover:text-ember">FAQ</a>
+      </div>
+
+      <!-- Desktop WA + Mobile hamburger -->
+      <div class="flex items-center gap-4">
+        <a id="nav-wa" href="#" target="_blank"
+           class="hidden md:flex font-mono text-xs uppercase tracking-widest px-5 py-2.5 rounded-full transition"
+           style="background:#0F1A14;color:#F4F1E8"
+           onmouseover="this.style.background='#E2622A'"
+           onmouseout="this.style.background='#0F1A14'">
+          Tanya via WA
+        </a>
+        <button id="hamburger" class="md:hidden flex flex-col gap-[7px] p-2" aria-label="Menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar" style="width:16px"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div id="mobile-drawer" class="fixed top-0 right-0 h-full w-72 z-[60] flex flex-col px-8 py-24 gap-8"
+       style="background:#0F1A14">
+    <nav class="flex flex-col gap-5">
+      <a href="#select-trip" class="drawer-link font-display text-3xl uppercase transition"
+         style="color:#F4F1E8" onmouseover="this.style.color='#E2622A'" onmouseout="this.style.color='#F4F1E8'">Trip</a>
+      <a href="#packages"    class="drawer-link font-display text-3xl uppercase transition"
+         style="color:#F4F1E8" onmouseover="this.style.color='#E2622A'" onmouseout="this.style.color='#F4F1E8'">Paket</a>
+      <a href="#comparison"  class="drawer-link font-display text-3xl uppercase transition"
+         style="color:#F4F1E8" onmouseover="this.style.color='#E2622A'" onmouseout="this.style.color='#F4F1E8'">Fasilitas</a>
+      <a href="#faq"         class="drawer-link font-display text-3xl uppercase transition"
+         style="color:#F4F1E8" onmouseover="this.style.color='#E2622A'" onmouseout="this.style.color='#F4F1E8'">FAQ</a>
+    </nav>
+    <a id="mobile-wa" href="#" target="_blank" class="mt-auto font-mono text-xs uppercase tracking-widest text-center py-4 px-5 rounded-full transition"
+       style="border:1px solid rgba(242,162,75,0.5);color:#F2A24B"
+       onmouseover="this.style.background='#F2A24B';this.style.color='#0F1A14'"
+       onmouseout="this.style.background='transparent';this.style.color='#F2A24B'">
+      Chat via WhatsApp →
+    </a>
+  </div>
+  <div id="drawer-overlay" class="fixed inset-0 z-[55]" style="background:rgba(0,0,0,0.55)"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       HERO — foto full-bleed, headline besar, penomoran trip, caption
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="hero" class="relative min-h-screen flex flex-col overflow-hidden" style="background:#0F1A14">
+
+    <!-- Foto latar -->
+    <div id="hero-bg" class="absolute inset-0 bg-cover bg-center" style="background-image:none"></div>
+    <div class="absolute inset-0 grain" style="background:linear-gradient(180deg, rgba(15,26,20,.72) 0%, rgba(15,26,20,.30) 38%, rgba(15,26,20,.35) 60%, rgba(15,26,20,.92) 100%)"></div>
+
+    <!-- Headline + penomoran -->
+    <div class="relative flex-1 flex items-center pt-28">
+      <div class="max-w-7xl mx-auto px-6 lg:px-10 w-full grid lg:grid-cols-12 gap-6 items-end">
+        <div class="lg:col-span-10">
+          <p id="hero-tagline" class="font-mono text-xs uppercase tracking-[0.3em] mb-5" style="color:#F2A24B"></p>
+          <h1 id="hero-heading" class="font-display uppercase leading-[0.82]" style="color:#F4F1E8;font-size:clamp(3rem, 13vw, 7.5rem)"></h1>
+        </div>
+        <!-- Penomoran trip: menunjukkan posisi trip yang sedang disorot -->
+        <div id="hero-counter" class="hidden lg:flex lg:col-span-2 flex-col items-end gap-1 font-display"></div>
+      </div>
+    </div>
+
+    <!-- Caption ala majalah + swipe cue -->
+    <div class="relative pb-10">
+      <div class="max-w-7xl mx-auto px-6 lg:px-10">
+        <div class="flex flex-wrap gap-4 mb-10">
+          <a href="#select-trip"
+             class="font-mono text-xs uppercase tracking-widest px-8 py-4 rounded-full transition"
+             style="background:#E2622A;color:#F4F1E8"
+             onmouseover="this.style.background='#F2A24B';this.style.color='#0F1A14'"
+             onmouseout="this.style.background='#E2622A';this.style.color='#F4F1E8'">
+            Pilih Trip ↓
+          </a>
+          <a id="hero-wa" href="#" target="_blank"
+             class="font-mono text-xs uppercase tracking-widest px-8 py-4 rounded-full transition"
+             style="border:1px solid rgba(244,241,232,0.3);color:#F4F1E8"
+             onmouseover="this.style.borderColor='#E2622A';this.style.color='#E2622A'"
+             onmouseout="this.style.borderColor='rgba(244,241,232,0.3)';this.style.color='#F4F1E8'">
+            Tanya dulu via WA
+          </a>
+        </div>
+
+        <div id="hero-captions" class="grid sm:grid-cols-3 gap-8 pt-8 border-t" style="border-color:rgba(244,241,232,0.18)"></div>
+
+        <div class="mt-8 flex items-center gap-3">
+          <span id="hero-swipe-label" class="font-mono text-[10px] uppercase tracking-[0.3em]" style="color:#F2A24B"></span>
+          <span class="h-px flex-1" style="background:rgba(244,241,232,.25)"></span>
+          <span class="font-mono text-xs" style="color:#F2A24B">↓</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TRIP SELECTOR
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="select-trip" class="py-20 lg:py-28 bg-mist">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="mb-12 reveal flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[0.3em] mb-4" style="color:#E2622A">Rekomendasi Trip</p>
+          <h2 class="font-display text-4xl lg:text-5xl uppercase leading-[0.92]">Mau naik<br>gunung mana?</h2>
+        </div>
+        <p class="max-w-xs font-mono text-xs" style="color:#8C9485">Diurutkan sesuai rekomendasi tim kami. Klik kartu untuk lihat paket, harga, dan fasilitas.</p>
+      </div>
+      <div id="trip-cards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal reveal-delay-1"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TRIP DETAIL  (dynamic)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="trip-detail" class="content-section py-20 lg:py-28 bg-mist border-t" style="border-color:rgba(0,0,0,0.07)">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      <div id="trip-detail-inner" class="grid lg:grid-cols-12 gap-12"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PACKAGES  (dynamic)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="packages" class="content-section py-20 lg:py-28 grain overflow-hidden" style="background:#0F1A14">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 relative">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-14">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[0.3em] mb-4" style="color:#F2A24B">Pricelist</p>
+          <h2 id="pkg-heading" class="font-display text-4xl lg:text-5xl uppercase leading-[0.92]" style="color:#F4F1E8"></h2>
+        </div>
+        <p id="pkg-sub" class="max-w-sm font-mono text-sm" style="color:#8C9485"></p>
+      </div>
+      <div id="packages-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       COMPARISON  (dynamic)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="comparison" class="content-section py-20 lg:py-28 bg-mist">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="mb-14 reveal">
+        <p class="font-mono text-xs uppercase tracking-[0.3em] mb-4" style="color:#E2622A">Perbandingan Fasilitas</p>
+        <h2 class="font-display text-4xl lg:text-5xl uppercase leading-[0.92]">Apa bedanya<br>tiap paket?</h2>
+      </div>
+      <div class="overflow-x-auto reveal reveal-delay-1">
+        <table class="cmp-table w-full min-w-[700px] border-collapse">
+          <thead>
+            <tr id="cmp-thead" class="border-b-2" style="border-color:#0F1A14"></tr>
+          </thead>
+          <tbody id="cmp-tbody"></tbody>
+        </table>
+      </div>
+      <p class="font-mono text-xs mt-5" style="color:#8C9485">✓ Termasuk &nbsp;&nbsp; — Tidak termasuk &nbsp;&nbsp; Teks = spesifikasi detail</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FAQ  (dynamic: trip-specific + global)
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="faq" class="content-section py-20 lg:py-28" style="background:#0F1A14">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 grid lg:grid-cols-12 gap-12">
+      <div class="lg:col-span-4">
+        <p class="font-mono text-xs uppercase tracking-[0.3em] mb-4" style="color:#F2A24B">FAQ</p>
+        <h2 class="font-display text-4xl uppercase leading-[0.92]" style="color:#F4F1E8">Sering<br>Ditanyakan</h2>
+        <p id="faq-trip-name" class="font-mono text-sm mt-3" style="color:#E2622A"></p>
+      </div>
+      <div id="faq-list" class="lg:col-span-8"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       CTA — foto full-bleed trip aktif + badge muter + thumbnail trip lain
+       ══════════════════════════════════════════════════════════════ -->
+  <section id="cta" class="content-section relative py-24 lg:py-32 overflow-hidden" style="background:#0F1A14">
+    <div id="cta-bg" class="absolute inset-0 bg-cover bg-center" style="background-image:none;transform:scale(1.05)"></div>
+    <div class="absolute inset-0 grain" style="background:linear-gradient(0deg, rgba(15,26,20,.94) 8%, rgba(15,26,20,.55) 55%, rgba(15,26,20,.75) 100%)"></div>
+
+    <div class="relative max-w-7xl mx-auto px-6 lg:px-10">
+      <div class="grid lg:grid-cols-12 gap-10 items-end">
+        <div class="lg:col-span-8">
+          <p class="font-mono text-xs uppercase tracking-[0.3em] mb-4" style="color:#F2A24B">Slot Terbatas</p>
+          <h2 class="font-display uppercase leading-[0.88]" style="color:#F4F1E8;font-size:clamp(2.4rem, 6.5vw, 5rem)">
+            Tiap pemberangkatan<br>slotnya terbatas.
+          </h2>
+          <a id="cta-wa" href="#" target="_blank"
+             class="inline-flex items-center gap-3 mt-8 font-mono uppercase text-sm tracking-widest px-9 py-4.5 rounded-full transition"
+             style="background:#E2622A;color:#F4F1E8;padding-top:1.1rem;padding-bottom:1.1rem"
+             onmouseover="this.style.background='#F4F1E8';this.style.color='#0F1A14'"
+             onmouseout="this.style.background='#E2622A';this.style.color='#F4F1E8'">
+            Chat Admin Sekarang →
+          </a>
+        </div>
+
+        <div class="lg:col-span-4 flex lg:justify-end">
+          <div id="cta-thumbs" class="flex -space-x-5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge muter -->
+    <div class="absolute bottom-8 right-8 hidden md:flex w-24 h-24 rounded-full items-center justify-center"
+         style="background:rgba(244,241,232,0.08);backdrop-filter:blur(6px);border:1px solid rgba(244,241,232,0.3)">
+      <svg viewBox="0 0 100 100" width="96" height="96" class="cta-badge-spin">
+        <defs><path id="badge-circle" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"/></defs>
+        <text font-family="'JetBrains Mono', monospace" font-size="8" letter-spacing="2" fill="#F4F1E8">
+          <textPath href="#badge-circle">• TEMAN TREKKING • AYO MENDAKI • TEMAN TREKKING </textPath>
+        </text>
+      </svg>
+      <span class="absolute font-mono text-[9px]" style="color:#F2A24B">↗</span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-10 border-t" style="background:#0F1A14;border-color:rgba(255,255,255,0.08)">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-xs" style="color:#8C9485">
+      <div class="flex items-center gap-3 flex-wrap justify-center md:justify-start">
+        <span id="footer-brand" class="font-bold"></span>
+        <span>·</span>
+        <span id="footer-entity"></span>
+        <span>·</span>
+        <span>© <span id="year"></span></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="footer-location"></span>
+        <span>·</span>
+        <span id="footer-social"></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FLOATING UI ELEMENTS
+       ══════════════════════════════════════════════════════════════ -->
+
+  <!-- WA Float -->
+  <a id="float-wa" href="#" target="_blank"
+     class="wa-pulse fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110"
+     style="background:#25D366;color:white"
+     title="Chat via WhatsApp">
+    <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor">
+      <path d="M16 0C7.16 0 0 7.16 0 16c0 2.82.74 5.47 2.03 7.76L0 32l8.45-2.22A15.9 15.9 0 0 0 16 32c8.84 0 16-7.16 16-16S24.84 0 16 0zm0 29.2c-2.46 0-4.86-.66-6.95-1.91l-.5-.3-5.02 1.32 1.34-4.9-.33-.5A13.18 13.18 0 0 1 2.8 16C2.8 8.7 8.7 2.8 16 2.8S29.2 8.7 29.2 16 23.3 29.2 16 29.2zm7.23-9.86c-.4-.2-2.34-1.15-2.7-1.29-.36-.13-.63-.2-.89.2-.26.4-1.02 1.29-1.25 1.55-.23.26-.46.3-.86.1-.4-.2-1.68-.62-3.2-1.97-1.18-1.05-1.98-2.36-2.21-2.76-.23-.4-.02-.61.17-.81.18-.18.4-.46.6-.7.2-.23.26-.4.4-.66.13-.26.07-.5-.03-.7-.1-.2-.89-2.15-1.22-2.94-.32-.78-.65-.67-.89-.68-.23-.01-.5-.01-.76-.01s-.7.1-1.06.5c-.36.4-1.4 1.37-1.4 3.34s1.43 3.87 1.63 4.13c.2.26 2.82 4.3 6.83 6.03.96.41 1.7.66 2.28.85.96.3 1.83.26 2.52.16.77-.11 2.34-.96 2.67-1.88.33-.93.33-1.72.23-1.88-.1-.16-.36-.26-.76-.46z"/>
+    </svg>
+  </a>
+
+  <!-- Back to top -->
+  <button id="back-to-top"
+          class="fixed bottom-24 left-6 z-50 w-12 h-12 rounded-full flex items-center justify-center font-mono text-sm shadow-xl opacity-0 pointer-events-none"
+          style="background:#0F1A14;color:#F4F1E8"
+          title="Kembali ke atas"
+          onmouseover="this.style.background='#E2622A'"
+          onmouseout="this.style.background='#0F1A14'">
+    ↑
+  </button>
+
+  <!-- Toast -->
+  <div id="toast"
+       class="fixed bottom-28 right-6 z-50 font-mono text-xs px-5 py-3.5 rounded-full shadow-xl pointer-events-none"
+       style="background:#0F1A14;color:#F4F1E8;opacity:0">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SCRIPTS — load config dulu, baru app
+       ══════════════════════════════════════════════════════════════ -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
