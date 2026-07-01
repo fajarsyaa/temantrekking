@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRACKLINE — Open Trip Pendakian</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --forest:#1B2B22;
+    --forest-deep:#0F1A14;
+    --ember:#E2622A;
+    --sunrise:#F2A24B;
+    --mist:#F4F1E8;
+    --stone:#8C9485;
+  }
+  *{ -webkit-font-smoothing:antialiased; }
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--mist);
+    color:var(--forest-deep);
+    font-family:'Inter',sans-serif;
+  }
+  .font-display{ font-family:'Anton', sans-serif; letter-spacing:0.01em; }
+  .font-mono{ font-family:'JetBrains Mono', monospace; }
+
+  .contour{
+    position:absolute; inset:0; pointer-events:none; opacity:0.10;
+  }
+
+  .grain::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity:0.05; mix-blend-mode:overlay; pointer-events:none;
+  }
+
+  .peak-mark{
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .pkg-card{
+    transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .pkg-card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -16px rgba(15,26,20,0.35);
+  }
+  .pkg-card.featured{
+    border-color: var(--ember);
+  }
+
+  .wa-float{
+    animation: pulse-wa 2.4s infinite;
+  }
+  @keyframes pulse-wa{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(37,211,102,0.45); }
+    50%{ box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+  }
+
+  .reveal{
+    opacity:0; transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.show{ opacity:1; transform:none; }
+
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--mist); }
+  ::-webkit-scrollbar-thumb{ background:var(--forest); border-radius:8px; }
+
+  .elev-line{
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: draw 2.6s ease forwards .3s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+</style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- ============ EDIT ZONE NOTICE (hapus komentar ini setelah edit) ============
+  - Ganti "TRACKLINE" dan semua [GANTI: ...] dengan info trip kamu.
+  - Ganti nomor WA di variabel WA_NUMBER pada <script> paling bawah.
+  - Ganti isi paket di array PACKAGES pada <script> paling bawah — otomatis ter-render.
+=============================================================================== -->
+
+<!-- NAVBAR -->
+<nav class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[var(--mist)]/85 border-b border-black/5">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+    <a href="#home" class="font-display text-2xl tracking-wide text-[var(--forest-deep)]">TRACK<span class="text-[var(--ember)]">LINE</span></a>
+    <div class="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest text-[var(--forest)]">
+      <a href="#trip" class="hover:text-[var(--ember)] transition">Trip</a>
+      <a href="#paket" class="hover:text-[var(--ember)] transition">Paket</a>
+      <a href="#benefit" class="hover:text-[var(--ember)] transition">Fasilitas</a>
+      <a href="#faq" class="hover:text-[var(--ember)] transition">FAQ</a>
+    </div>
+    <a id="nav-wa" href="#" target="_blank" class="font-mono text-xs uppercase tracking-widest bg-[var(--forest-deep)] text-[var(--mist)] px-5 py-2.5 rounded-full hover:bg-[var(--ember)] transition">
+      Tanya via WA
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="relative min-h-screen flex items-end pt-32 pb-20 bg-[var(--forest-deep)] overflow-hidden grain">
+  <div class="absolute inset-0">
+    <svg class="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1200 800" preserveAspectRatio="none">
+      <polygon points="0,800 0,420 180,260 320,400 480,150 650,380 800,220 980,420 1120,300 1200,420 1200,800" fill="#1B2B22"/>
+      <polygon points="0,800 0,540 220,360 400,480 600,300 820,470 1000,330 1200,500 1200,800" fill="#0F1A14"/>
+    </svg>
+    <svg class="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 1200 800" preserveAspectRatio="none">
+      <path class="elev-line" d="M0,640 C150,560 250,520 350,420 C420,350 460,300 520,300 C580,300 600,380 660,380 C740,380 760,260 840,200 C900,150 950,170 1010,230 C1070,290 1120,300 1200,260"
+        fill="none" stroke="#F2A24B" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-6 lg:px-10 w-full grid lg:grid-cols-12 gap-8 items-end">
+    <div class="lg:col-span-9">
+      <p class="font-mono text-[var(--sunrise)] text-xs uppercase tracking-[0.3em] mb-5">[GANTI: Nama Gunung] · Open Trip & Private Trip</p>
+      <h1 class="font-display text-[var(--mist)] text-[14vw] leading-[0.85] lg:text-[7.5vw] uppercase">
+        Naik turun<br><span class="text-[var(--ember)]">bukan cuma jalan.</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-[var(--stone)] text-base lg:text-lg">
+        Pendakian terjadwal dengan guide berpengalaman, logistik lengkap, dan jalur yang sudah dipetakan detik demi detik. Tinggal pilih paket, sisanya kami yang urus.
+      </p>
+    </div>
+    <div class="lg:col-span-3 flex lg:flex-col gap-4 lg:items-end lg:text-right">
+      <a href="#paket" class="font-mono uppercase text-xs tracking-widest bg-[var(--ember)] text-[var(--mist)] px-6 py-4 rounded-full text-center w-full hover:bg-[var(--sunrise)] hover:text-[var(--forest-deep)] transition">
+        Lihat Pricelist ↓
+      </a>
+      <div class="font-mono text-[var(--stone)] text-xs leading-relaxed">
+        ELEVASI [GANTI: xxxx] MDPL<br>
+        JARAK TEMPUH [GANTI: xx] KM<br>
+        ESTIMASI [GANTI: x] HARI
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRIP INFO -->
+<section id="trip" class="relative py-24 lg:py-32 bg-[var(--mist)]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="grid lg:grid-cols-12 gap-12">
+      <div class="lg:col-span-4">
+        <p class="font-mono text-xs uppercase tracking-[0.3em] text-[var(--ember)] mb-4">Tentang Trip</p>
+        <h2 class="font-display text-4xl lg:text-5xl leading-[0.95] uppercase">[GANTI: Nama Gunung]<br>via [GANTI: Jalur Pendakian]</h2>
+      </div>
+      <div class="lg:col-span-8 reveal">
+        <p class="text-lg text-[var(--forest)] leading-relaxed max-w-3xl">
+          [GANTI: Deskripsikan singkat karakter gunung ini — medan, view andalan, tingkat kesulitan, dan kenapa orang harus ikut trip ini. 2-3 kalimat cukup, jangan kepanjangan.]
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-black/10 mt-12 border border-black/10">
+          <div class="bg-[var(--mist)] p-6">
+            <p class="font-mono text-xs text-[var(--stone)] uppercase">Elevasi</p>
+            <p class="font-display text-2xl mt-1">[GANTI] mdpl</p>
+          </div>
+          <div class="bg-[var(--mist)] p-6">
+            <p class="font-mono text-xs text-[var(--stone)] uppercase">Durasi</p>
+            <p class="font-display text-2xl mt-1">[GANTI] Hari</p>
+          </div>
+          <div class="bg-[var(--mist)] p-6">
+            <p class="font-mono text-xs text-[var(--stone)] uppercase">Tingkat</p>
+            <p class="font-display text-2xl mt-1">[GANTI]</p>
+          </div>
+          <div class="bg-[var(--mist)] p-6">
+            <p class="font-mono text-xs text-[var(--stone)] uppercase">Meeting Point</p>
+            <p class="font-display text-2xl mt-1">[GANTI]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICELIST / PAKET -->
+<section id="paket" class="relative py-24 lg:py-32 bg-[var(--forest-deep)] grain overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 relative">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16 reveal">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.3em] text-[var(--sunrise)] mb-4">Pricelist</p>
+        <h2 class="font-display text-[var(--mist)] text-4xl lg:text-5xl uppercase">Pilih Paket<br>Pendakianmu</h2>
+      </div>
+      <p class="text-[var(--stone)] max-w-md">Semua paket berangkat di tanggal yang sama, bedanya ada di kapasitas grup, fasilitas, dan privasi. Tap "Pesan via WA" untuk konfirmasi tanggal & slot.</p>
+    </div>
+
+    <div id="packages-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- diisi otomatis via JS dari array PACKAGES -->
+    </div>
+  </div>
+</section>
+
+<!-- BENEFIT / PERBANDINGAN -->
+<section id="benefit" class="relative py-24 lg:py-32 bg-[var(--mist)]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="mb-14 reveal">
+      <p class="font-mono text-xs uppercase tracking-[0.3em] text-[var(--ember)] mb-4">Perbandingan Fasilitas</p>
+      <h2 class="font-display text-4xl lg:text-5xl uppercase">Apa Bedanya<br>Tiap Paket?</h2>
+    </div>
+
+    <div class="overflow-x-auto reveal">
+      <table class="w-full min-w-[720px] border-collapse">
+        <thead>
+          <tr class="border-b-2 border-[var(--forest-deep)]">
+            <th class="text-left font-mono text-xs uppercase tracking-widest text-[var(--stone)] py-4 pr-4">Fasilitas</th>
+            <th id="th-pkg-0" class="text-left font-display text-lg uppercase py-4 px-4"></th>
+            <th id="th-pkg-1" class="text-left font-display text-lg uppercase py-4 px-4"></th>
+            <th id="th-pkg-2" class="text-left font-display text-lg uppercase py-4 px-4"></th>
+            <th id="th-pkg-3" class="text-left font-display text-lg uppercase py-4 px-4"></th>
+          </tr>
+        </thead>
+        <tbody id="benefit-table-body" class="font-mono text-sm">
+          <!-- diisi otomatis via JS dari array BENEFIT_ROWS -->
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-[var(--stone)] font-mono mt-4">✓ Termasuk &nbsp;&nbsp; — Tidak termasuk &nbsp;&nbsp; Teks = detail spesifik</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="relative py-24 lg:py-32 bg-[var(--forest-deep)]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 grid lg:grid-cols-12 gap-12">
+    <div class="lg:col-span-4">
+      <p class="font-mono text-xs uppercase tracking-[0.3em] text-[var(--sunrise)] mb-4">FAQ</p>
+      <h2 class="font-display text-[var(--mist)] text-4xl uppercase">Sering<br>Ditanyakan</h2>
+    </div>
+    <div class="lg:col-span-8 divide-y divide-white/10" id="faq-list">
+      <!-- diisi otomatis via JS dari array FAQS -->
+    </div>
+  </div>
+</section>
+
+<!-- CTA FOOTER -->
+<section class="relative py-24 bg-[var(--ember)] overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center">
+    <h2 class="font-display text-[var(--mist)] text-5xl lg:text-7xl uppercase leading-[0.9]">Slot terbatas<br>tiap pemberangkatan.</h2>
+    <a id="cta-wa" href="#" target="_blank" class="inline-block mt-10 font-mono uppercase text-sm tracking-widest bg-[var(--forest-deep)] text-[var(--mist)] px-10 py-5 rounded-full hover:bg-white hover:text-[var(--forest-deep)] transition">
+      Chat Admin Sekarang →
+    </a>
+  </div>
+</section>
+
+<footer class="bg-[var(--forest-deep)] py-10 border-t border-white/10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-4 text-[var(--stone)] font-mono text-xs">
+    <p>© <span id="year"></span> TRACKLINE. [GANTI: Nama usaha/komunitas trip].</p>
+    <p>[GANTI: Kota basecamp] · [GANTI: Instagram handle]</p>
+  </div>
+</footer>
+
+<!-- WA FLOATING BUTTON -->
+<a id="float-wa" href="#" target="_blank" class="wa-float fixed bottom-6 right-6 z-50 bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:scale-105 transition">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor"><path d="M16 0C7.16 0 0 7.16 0 16c0 2.82.74 5.47 2.03 7.76L0 32l8.45-2.22A15.9 15.9 0 0 0 16 32c8.84 0 16-7.16 16-16S24.84 0 16 0zm0 29.2c-2.46 0-4.86-.66-6.95-1.91l-.5-.3-5.02 1.32 1.34-4.9-.33-.5A13.18 13.18 0 0 1 2.8 16C2.8 8.7 8.7 2.8 16 2.8S29.2 8.7 29.2 16 23.3 29.2 16 29.2zm7.23-9.86c-.4-.2-2.34-1.15-2.7-1.29-.36-.13-.63-.2-.89.2-.26.4-1.02 1.29-1.25 1.55-.23.26-.46.3-.86.1-.4-.2-1.68-.62-3.2-1.97-1.18-1.05-1.98-2.36-2.21-2.76-.23-.4-.02-.61.17-.81.18-.18.4-.46.6-.7.2-.23.26-.4.4-.66.13-.26.07-.5-.03-.7-.1-.2-.89-2.15-1.22-2.94-.32-.78-.65-.67-.89-.68-.23-.01-.5-.01-.76-.01s-.7.1-1.06.5c-.36.4-1.4 1.37-1.4 3.34s1.43 3.87 1.63 4.13c.2.26 2.82 4.3 6.83 6.03.96.41 1.7.66 2.28.85.96.3 1.83.26 2.52.16.77-.11 2.34-.96 2.67-1.88.33-.93.33-1.72.23-1.88-.1-.16-.36-.26-.76-.46z"/></svg>
+</a>
+
+<script>
+  /* ============ KONFIGURASI — EDIT DI SINI ============ */
+
+  const WA_NUMBER = "62895341248153"; // GANTI dengan nomor WA admin (format 62xxxx tanpa + atau 0 di depan)
+  const TRIP_NAME = "[MT RAUNG]"; // dipakai untuk template pesan WA
+
+  // PAKET TRIP — tambah/kurangi/edit objek di array ini, otomatis ter-render di section #paket
+  const PACKAGES = [
+    {
+      name: "Hemat",
+      tagline: "Grup besar, harga ramah kantong",
+      price: "450.000",
+      unit: "/ orang",
+      slot: "Maks 20 orang/grup",
+      featured: false,
+      points: [
+        "Guide pendamping bersama",
+        "Tiket masuk simaksi",
+        "Tenda dome sharing (4 orang)",
+        "Makan 3x trip"
+      ]
+    },
+    {
+      name: "Reguler",
+      tagline: "Pilihan paling banyak diambil",
+      price: "650.000",
+      unit: "/ orang",
+      slot: "Maks 15 orang/grup",
+      featured: true,
+      points: [
+        "Guide + porter pendamping",
+        "Tiket masuk simaksi",
+        "Tenda dome sharing (3 orang)",
+        "Makan 3x + snack trip",
+        "Matras & sleeping bag"
+      ]
+    },
+    {
+      name: "Private",
+      tagline: "Grup sendiri, jadwal fleksibel",
+      price: "1.250.000",
+      unit: "/ orang",
+      slot: "Maks 6 orang/grup",
+      featured: false,
+      points: [
+        "Guide + porter khusus grupmu",
+        "Tiket masuk simaksi",
+        "Tenda dome sharing (2 orang)",
+        "Full board makan + camp coffee",
+        "Matras & sleeping bag",
+        "Jadwal berangkat custom"
+      ]
+    },
+    {
+      name: "VIP Summit",
+      tagline: "Servis penuh, fokus ke summit",
+      price: "1.950.000",
+      unit: "/ orang",
+      slot: "Maks 4 orang/grup",
+      featured: false,
+      points: [
+        "Guide senior + porter pribadi",
+        "Tiket masuk simaksi",
+        "Tenda dome 1-2 orang (privat)",
+        "Full board + menu summit attack",
+        "Perlengkapan tidur premium",
+        "Dokumentasi foto/video trip",
+        "Transport jemput basecamp"
+      ]
+    }
+  ];
+
+  // BARIS PERBANDINGAN FASILITAS — urutan kolom mengikuti urutan PACKAGES di atas
+  const BENEFIT_ROWS = [
+    { label: "Guide pendamping", values: ["✓", "✓", "✓ (privat)", "✓ (senior)"] },
+    { label: "Porter", values: ["—", "✓", "✓", "✓ pribadi"] },
+    { label: "Tenda", values: ["Sharing 4", "Sharing 3", "Sharing 2", "Privat 1-2"] },
+    { label: "Makan", values: ["3x", "3x + snack", "Full board", "Full board+"] },
+    { label: "Matras & sleeping bag", values: ["—", "✓", "✓", "Premium"] },
+    { label: "Dokumentasi trip", values: ["—", "—", "—", "✓"] },
+    { label: "Jadwal custom", values: ["—", "—", "✓", "✓"] },
+    { label: "Transport jemput", values: ["—", "—", "—", "✓"] }
+  ];
+
+  // FAQ
+  const FAQS = [
+    { q: "Apa saja yang perlu dibawa sendiri?", a: "[GANTI: jawaban — misal jaket, sepatu trekking, perlengkapan pribadi, dll]" },
+    { q: "Bagaimana sistem pembayaran & DP?", a: "[GANTI: jawaban — misal DP 50% via transfer, pelunasan H-3]" },
+    { q: "Apakah bisa reschedule jika cuaca buruk?", a: "[GANTI: jawaban kebijakan reschedule/refund]" },
+    { q: "Titik kumpul (meeting point) di mana?", a: "[GANTI: lokasi & jam kumpul]" }
+  ];
+
+  /* ============ RENDER LOGIC (tidak perlu diedit) ============ */
+
+  function waLink(message){
+    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+  }
+
+  document.getElementById('nav-wa').href = waLink(`Halo, saya mau tanya-tanya soal trip ${TRIP_NAME} 🙏`);
+  document.getElementById('cta-wa').href = waLink(`Halo, saya mau booking trip ${TRIP_NAME}. Boleh info slot terdekat?`);
+  document.getElementById('float-wa').href = waLink(`Halo, saya mau tanya soal trip ${TRIP_NAME} 🙏`);
+
+  const grid = document.getElementById('packages-grid');
+  PACKAGES.forEach(pkg => {
+    const card = document.createElement('div');
+    card.className = `pkg-card relative border-2 ${pkg.featured ? 'featured border-[var(--ember)] bg-[var(--forest)]' : 'border-white/10 bg-[#16221A]'} rounded-2xl p-6 flex flex-col`;
+    card.innerHTML = `
+      ${pkg.featured ? '<span class="absolute -top-3 left-6 font-mono text-[10px] uppercase tracking-widest bg-[var(--ember)] text-[var(--mist)] px-3 py-1 rounded-full">Paling Diminati</span>' : ''}
+      <p class="font-mono text-xs uppercase tracking-widest text-[var(--sunrise)]">${pkg.tagline}</p>
+      <h3 class="font-display text-3xl text-[var(--mist)] uppercase mt-2">${pkg.name}</h3>
+      <div class="mt-5 flex items-baseline gap-1">
+        <span class="font-mono text-xs text-[var(--stone)]">Rp</span>
+        <span class="font-display text-3xl text-[var(--mist)]">${pkg.price}</span>
+        <span class="font-mono text-xs text-[var(--stone)]">${pkg.unit}</span>
+      </div>
+      <p class="font-mono text-[11px] text-[var(--stone)] mt-1">${pkg.slot}</p>
+      <ul class="mt-6 space-y-2.5 flex-1">
+        ${pkg.points.map(p => `<li class="flex gap-2 text-sm text-[var(--mist)]/90"><span class="text-[var(--sunrise)]">✓</span><span>${p}</span></li>`).join('')}
+      </ul>
+      <a href="${waLink(`Halo, saya mau booking paket ${pkg.name} untuk trip ${TRIP_NAME}. Mohon info jadwal & slotnya 🙏`)}" target="_blank"
+        class="mt-7 text-center font-mono text-xs uppercase tracking-widest ${pkg.featured ? 'bg-[var(--ember)]' : 'bg-white/10'} text-[var(--mist)] py-3.5 rounded-full hover:bg-[var(--sunrise)] hover:text-[var(--forest-deep)] transition">
+        Pesan via WA
+      </a>
+    `;
+    grid.appendChild(card);
+  });
+
+  PACKAGES.forEach((pkg, i) => {
+    const th = document.getElementById(`th-pkg-${i}`);
+    if (th) th.textContent = pkg.name;
+  });
+
+  const tbody = document.getElementById('benefit-table-body');
+  BENEFIT_ROWS.forEach((row, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = idx % 2 === 0 ? 'bg-black/[0.03]' : '';
+    tr.innerHTML = `
+      <td class="py-3.5 pr-4 text-[var(--forest-deep)] font-semibold">${row.label}</td>
+      ${row.values.map(v => `<td class="py-3.5 px-4 text-[var(--forest)]">${v}</td>`).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const faqList = document.getElementById('faq-list');
+  FAQS.forEach((item, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'py-6';
+    wrap.innerHTML = `
+      <button class="faq-toggle w-full flex items-center justify-between text-left gap-4">
+        <span class="font-display text-xl lg:text-2xl text-[var(--mist)] uppercase">${item.q}</span>
+        <span class="font-mono text-[var(--sunrise)] text-xl shrink-0 transition-transform">+</span>
+      </button>
+      <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300">
+        <p class="text-[var(--stone)] mt-4 max-w-2xl">${item.a}</p>
+      </div>
+    `;
+    const btn = wrap.querySelector('.faq-toggle');
+    const ans = wrap.querySelector('.faq-answer');
+    const icon = wrap.querySelector('span:last-child');
+    btn.addEventListener('click', () => {
+      const isOpen = ans.style.maxHeight && ans.style.maxHeight !== '0px';
+      document.querySelectorAll('.faq-answer').forEach(a => a.style.maxHeight = '0px');
+      document.querySelectorAll('#faq-list span.font-mono').forEach(s => s.textContent = '+');
+      if (!isOpen){
+        ans.style.maxHeight = ans.scrollHeight + 'px';
+        icon.textContent = '–';
+      }
+    });
+    faqList.appendChild(wrap);
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
