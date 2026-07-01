@@ -230,7 +230,7 @@ function renderPackages(trip) {
       : 'border:2px solid rgba(255,255,255,0.10);background:#16221A';
 
     card.innerHTML = `
-      ${isFeatured ? `<span class="absolute -top-3.5 left-6 font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:#E2622A;color:#F4F1E8">Paling Diminati</span>` : ''}
+      ${isFeatured ? `<span class="absolute -top-3.5 left-6 font-mono text-[10px] uppercase tracking-widest px-3 m-3 py-1.5 rounded-full" style="background:#E2622A;color:#F4F1E8">Paling Diminati</span>` : ''}
 
       <p class="font-mono text-xs uppercase tracking-widest" style="color:#F2A24B">${pkg.tagline}</p>
       <h3 class="font-display text-3xl uppercase mt-2" style="color:#F4F1E8">${pkg.name}</h3>
