@@ -180,7 +180,29 @@
         </div>
         <p id="pkg-sub" class="max-w-sm font-mono text-sm" style="color:#8C9485"></p>
       </div>
-      <div id="packages-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+      
+      <!-- Package Grid Container with Scroll Indicator -->
+      <div class="relative">
+        <!-- Scroll hint for mobile -->
+        <div id="scroll-hint" class="md:hidden mb-4 flex items-center justify-center gap-2 animate-pulse" style="color:#F2A24B">
+          <span class="font-mono text-xs tracking-widest">GESER →</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+        
+        <!-- Packages scroll container -->
+        <div class="overflow-x-auto -mx-6 lg:mx-0 px-6 lg:px-0 relative">
+          <div id="packages-grid"></div>
+          
+          <!-- Right fade gradient for mobile -->
+          <div class="md:hidden absolute top-0 right-0 h-full w-16 pointer-events-none" 
+               style="background: linear-gradient(to right, rgba(15,26,20,0), rgba(15,26,20,1));"></div>
+        </div>
+        
+        <!-- Carousel pagination dots for mobile -->
+        <div id="pkg-pagination" class="md:hidden mt-6 flex justify-center gap-2"></div>
+      </div>
     </div>
   </section>
 

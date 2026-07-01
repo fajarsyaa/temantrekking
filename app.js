@@ -218,14 +218,13 @@ function renderPackages(trip) {
   const grid = document.getElementById('packages-grid');
   grid.innerHTML = '';
 
-  // Sesuaikan kolom grid dengan jumlah paket
-  const cols = trip.packages.length;
-  grid.style.gridTemplateColumns = `repeat(${Math.min(cols, 4)}, minmax(0, 1fr))`;
+  // Grid responsif: mobile (1 col) → tablet (2 col) → desktop (4 col)
+  // CSS media queries menangani breakpoint, tidak perlu hardcode di JS
 
   trip.packages.forEach(pkg => {
     const card = document.createElement('div');
     const isFeatured = pkg.featured;
-    card.className = 'pkg-card relative rounded-2xl p-6';
+    card.className = 'pkg-card relative rounded-2xl p-6 min-h-[600px]';
     card.style.cssText = isFeatured
       ? 'border:2px solid #E2622A;background:#1B2B22'
       : 'border:2px solid rgba(255,255,255,0.10);background:#16221A';
@@ -273,6 +272,76 @@ function renderPackages(trip) {
       showToast('Membuka WhatsApp...');
     });
   });
+
+  // Setup carousel pagination untuk mobile
+  setupPackagePagination(grid, trip);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PACKAGE CAROUSEL PAGINATION (Mobile)
+   ══════════════════════════════════════════════════════════════════ */
+function setupPackagePagination(grid, trip) {
+  const pagination = document.getElementById('pkg-pagination');
+  pagination.innerHTML = '';
+
+  // Create dots
+  const dotsContainer = pagination;
+  trip.packages.forEach((_, idx) => {
+    const dot = document.createElement('div');
+    dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+    dot.dataset.index = idx;
+    dotsContainer.appendChild(dot);
+
+    dot.addEventListener('click', () => {
+      const card = grid.querySelectorAll('.pkg-card')[idx];
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        updatePaginationDots(idx);
+      }
+    });
+  });
+
+  // Track scroll position and update dots
+  let scrollTimeout;
+  const parentContainer = grid.parentElement;
+  
+  parentContainer.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      updatePaginationDots(getCurrentPageIndex());
+    }, 100);
+  });
+}
+
+function updatePaginationDots(activeIdx) {
+  const dots = document.querySelectorAll('#pkg-pagination .dot');
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle('active', idx === activeIdx);
+  });
+}
+
+function getCurrentPageIndex() {
+  const grid = document.getElementById('packages-grid');
+  const container = grid.parentElement;
+  const cards = grid.querySelectorAll('.pkg-card');
+  
+  if (cards.length === 0) return 0;
+
+  let activeIdx = 0;
+  let minDistance = Infinity;
+
+  cards.forEach((card, idx) => {
+    const rect = card.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const distance = Math.abs(rect.left - containerRect.left);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      activeIdx = idx;
+    }
+  });
+
+  return activeIdx;
 }
 
 /* ══════════════════════════════════════════════════════════════════
